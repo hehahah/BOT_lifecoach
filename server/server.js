@@ -15,9 +15,6 @@ app.use(express.static(path.join(__dirname, '..')));
 
 // API配置
 const API_KEY = process.env.API_KEY;
-if (!API_KEY) {
-    console.error('错误: API密钥未配置。请确保在环境变量中设置API_KEY。');
-}
 const API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 
 // 系统提示词，定义AI角色
@@ -33,9 +30,16 @@ const SYSTEM_PROMPT = `你是一位专业的Life Coach，拥有丰富的个人�
 // 处理聊天请求
 app.post('/chat', async (req, res) => {
     try {
+        // 检查API密钥配置
         if (!API_KEY) {
-            res.status(500).json({ error: 'API密钥未配置，请联系管理员配置API密钥。' });
-            return;
+            console.error('API密钥未配置，请确保环境变量API_KEY已正确设置');
+            throw new Error('API密钥未配置');
+        }
+        
+        // 验证API密钥格式
+        if (typeof API_KEY !== 'string' || !API_KEY.trim()) {
+            console.error('API密钥格式无效');
+            throw new Error('API密钥格式无效');
         }
 
         const userMessage = req.body.message;
@@ -66,10 +70,16 @@ app.post('/chat', async (req, res) => {
         res.setHeader('Connection', 'keep-alive');
 
         // 发送API请求
+        console.log('正在发送API请求到:', API_URL);
+        console.log('请求头部:', JSON.stringify({ ...headers, Authorization: 'Bearer ****' }));
+        
         const response = await axios.post(API_URL, requestData, {
             headers,
             timeout: 60000, // 60秒超时
-            responseType: 'stream'
+            responseType: 'stream',
+            validateStatus: function (status) {
+                return status >= 200 && status < 300; // 只接受2xx的响应状态码
+            }
         });
 
         // 处理流式响应
@@ -106,9 +116,35 @@ app.post('/chat', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('请求处理失败:', error);
-        const errorMessage = error.response?.data?.error?.message || error.message || '服务器内部错误';
-        res.status(500).json({ error: errorMessage });
+        console.error('请求处理失败:', {
+            message: error.message,
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data
+        });
+
+        // 根据错误类型返回适当的状态码
+        if (error.response) {
+            // API服务器返回了错误响应
+            const status = error.response.status;
+            const errorMessage = error.response.data?.error?.message || error.response.statusText || '服务器返回错误';
+            res.status(status).json({
+                error: errorMessage,
+                details: `API服务器返回 ${status} 错误`
+            });
+        } else if (error.request) {
+            // 请求已发出，但没有收到响应
+            res.status(503).json({
+                error: '无法连接到API服务器',
+                details: error.message
+            });
+        } else {
+            // 请求配置出错
+            res.status(500).json({
+                error: '服务器内部错误',
+                details: error.message
+            });
+        }
     }
 });
 
