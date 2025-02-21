@@ -8,8 +8,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 在Vercel环境中不需要指定端口，它会自动处理
-
 // 配置静态文件服务
 app.use(express.static(path.join(__dirname, '..')));
 
@@ -93,7 +91,5 @@ app.post('/chat', async (req, res) => {
     }
 });
 
-// 启动服务器
-app.listen(port, () => {
-    console.log(`服务器运行在 http://localhost:${port}`);
-});
+// 导出app实例供Vercel使用
+module.exports = app;
