@@ -23,7 +23,10 @@ chatForm.addEventListener('submit', async (e) => {
             body: JSON.stringify({ message })
         });
 
-        if (!response.ok) throw new Error('网络请求失败');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '网络请求失败');
+        }
 
         // 处理流式响应
         const reader = response.body.getReader();
