@@ -17,7 +17,27 @@ app.use(express.static(path.join(__dirname, '..'), {
 // 错误处理中间件
 app.use((err, req, res, next) => {
   console.error('服务器错误:', err);
-  res.status(500).json({ error: '服务器内部错误', details: err.message });
+  if (err.response) {
+    // API请求错误
+    console.error('API响应错误:', err.response.data);
+    res.status(err.response.status).json({
+      error: '服务器请求失败',
+      details: err.response.data
+    });
+  } else if (err.request) {
+    // 请求未收到响应
+    console.error('未收到API响应');
+    res.status(504).json({
+      error: '服务器网关超时',
+      details: '未能收到API响应'
+    });
+  } else {
+    // 其他错误
+    res.status(500).json({
+      error: '服务器内部错误',
+      details: err.message
+    });
+  }
 });
 
 // API配置
@@ -36,6 +56,14 @@ const SYSTEM_PROMPT = `你是一位专业的Life Coach，拥有丰富的个人�
 
 // 处理聊天请求
 app.post('/chat', async (req, res) => {
+    // 验证API密钥
+    if (!API_KEY) {
+        return res.status(500).json({
+            error: '服务器配置错误',
+            details: 'API密钥未配置'
+        });
+    }
+
     try {
         const userMessage = req.body.message;
 
@@ -65,7 +93,10 @@ app.post('/chat', async (req, res) => {
         const response = await axios.post(API_URL, requestData, {
             headers,
             timeout: 60000, // 60秒超时
-            responseType: 'stream'
+            responseType: 'stream',
+            validateStatus: function (status) {
+                return status >= 200 && status < 300; // 只接受2xx状态码
+            }
         });
 
         // 处理流式响应
