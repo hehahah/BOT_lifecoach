@@ -255,9 +255,9 @@ function createMessageElement(role, content) {
     return messageDiv;
 }
 
-function addMessage(message, isUser = false) {
+function addMessage(content, role) {
     const chatHistory = document.getElementById('chatHistory');
-    const messageElement = createMessageElement(message, isUser);
+    const messageElement = createMessageElement(role, content);
     chatHistory.appendChild(messageElement);
     chatHistory.scrollTop = chatHistory.scrollHeight;
 }

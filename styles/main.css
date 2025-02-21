@@ -172,10 +172,9 @@ body {
     background-color: var(--accent-color);
 }
 .user .message-content {
-    background-color: #95EC69;
+    background-color: rgba(149, 236, 105, 0.9);
     color: var(--text-primary);
     border-radius: 1rem 1rem 0 1rem;
-    vertical-align: top;
 }
 
 .user .message-content:after {
@@ -189,10 +188,9 @@ body {
 }
 
 .ai .message-content {
-    background-color: #FFFFFF;
+    background-color: rgba(255, 255, 255, 0.9);
     color: var(--text-primary);
     border-radius: 1rem 1rem 1rem 0;
-    vertical-align: top;
 }
 
 .ai .message-content:after {

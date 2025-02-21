@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 // 配置CORS和请求体解析
@@ -31,12 +32,19 @@ const SYSTEM_PROMPT = `你是一位专业的Life Coach，拥有丰富的个人�
 app.post('/chat', async (req, res) => {
     try {
         if (!API_KEY) {
-            throw new Error('API密钥未配置');
+            console.error('API密钥未配置');
+            return res.status(500).json({
+                error: '服务器配置错误：API密钥未正确配置，请检查环境变量设置。',
+                code: 'API_KEY_NOT_CONFIGURED'
+            });
         }
 
         const userMessage = req.body.message;
         if (!userMessage) {
-            throw new Error('消息内容不能为空');
+            return res.status(400).json({
+                error: '消息内容不能为空',
+                code: 'EMPTY_MESSAGE'
+            });
         }
 
         // 准备请求数据
