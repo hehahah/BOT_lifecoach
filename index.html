@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Coach AI 对话助手</title>
+    <!-- 引入样式文件 -->
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <!-- 页面头部 -->
+    <header class="header">
+        <h1>Life Coach AI 对话助手</h1>
+        <p class="subtitle">你的个人成长伙伴，随时为你提供建议和指导</p>
+    </header>
+
+    <!-- 主要内容区 -->
+    <main class="main-content">
+        <!-- 对话历史区域 -->
+        <section class="chat-history" id="chatHistory">
+            <!-- 对话内容将通过JavaScript动态插入 -->
+        </section>
+
+        <!-- 输入区域 -->
+        <section class="input-area">
+            <form id="chatForm" class="chat-form">
+                <textarea 
+                    id="userInput" 
+                    class="message-input" 
+                    placeholder="输入你想说的话..."
+                    rows="3"
+                    required
+                ></textarea>
+                <button type="submit" class="send-button">发送</button>
+            </form>
+        </section>
+    </main>
+
+    <!-- 页面底部 -->
+    <footer class="footer">
+        <p>&copy; 2024 Life Coach AI. All rights reserved.</p>
+    </footer>
+
+    <!-- 引入脚本文件 -->
+    <script src="scripts/main.js"></script>
+</body>
+</html>
