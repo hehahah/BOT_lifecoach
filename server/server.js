@@ -30,16 +30,8 @@ const SYSTEM_PROMPT = `你是一位专业的Life Coach，拥有丰富的个人�
 // 处理聊天请求
 app.post('/chat', async (req, res) => {
     try {
-        // 检查API密钥配置
         if (!API_KEY) {
-            console.error('API密钥未配置，请确保在Vercel平台上设置了环境变量API_KEY');
             throw new Error('API密钥未配置');
-        }
-        
-        // 验证API密钥格式
-        if (typeof API_KEY !== 'string' || !API_KEY.trim()) {
-            console.error('API密钥格式无效');
-            throw new Error('API密钥格式无效');
         }
 
         const userMessage = req.body.message;
@@ -64,33 +56,16 @@ app.post('/chat', async (req, res) => {
             'Authorization': `Bearer ${API_KEY}`
         };
 
-        // 打印详细的请求信息（不包含敏感信息）
-        console.log('发送请求到API:', API_URL);
-        console.log('请求头部:', JSON.stringify({
-            ...headers,
-            Authorization: '已隐藏'
-        }));
-        console.log('请求数据:', JSON.stringify({
-            ...requestData,
-            messages: '[已隐藏]'
-        }));
-
-        // 设置响应头
+        // 设置响应头，启用流式输出
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
 
         // 发送API请求
-        console.log('正在发送API请求到:', API_URL);
-        console.log('请求头部:', JSON.stringify({ ...headers, Authorization: 'Bearer ****' }));
-        
         const response = await axios.post(API_URL, requestData, {
             headers,
             timeout: 60000, // 60秒超时
-            responseType: 'stream',
-            validateStatus: function (status) {
-                return status >= 200 && status < 300; // 只接受2xx的响应状态码
-            }
+            responseType: 'stream'
         });
 
         // 处理流式响应
@@ -127,35 +102,9 @@ app.post('/chat', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('请求处理失败:', {
-            message: error.message,
-            status: error.response?.status,
-            statusText: error.response?.statusText,
-            data: error.response?.data
-        });
-
-        // 根据错误类型返回适当的状态码
-        if (error.response) {
-            // API服务器返回了错误响应
-            const status = error.response.status;
-            const errorMessage = error.response.data?.error?.message || error.response.statusText || '服务器返回错误';
-            res.status(status).json({
-                error: errorMessage,
-                details: `API服务器返回 ${status} 错误`
-            });
-        } else if (error.request) {
-            // 请求已发出，但没有收到响应
-            res.status(503).json({
-                error: '无法连接到API服务器',
-                details: error.message
-            });
-        } else {
-            // 请求配置出错
-            res.status(500).json({
-                error: '服务器内部错误',
-                details: error.message
-            });
-        }
+        console.error('请求处理失败:', error);
+        const errorMessage = error.response?.data?.error?.message || error.message || '服务器内部错误';
+        res.status(500).json({ error: errorMessage });
     }
 });
 
