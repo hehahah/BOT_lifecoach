@@ -15,6 +15,9 @@ app.use(express.static(path.join(__dirname, '..')));
 
 // API配置
 const API_KEY = process.env.API_KEY;
+if (!API_KEY) {
+    console.error('错误: API密钥未配置。请确保在环境变量中设置API_KEY。');
+}
 const API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 
 // 系统提示词，定义AI角色
@@ -30,7 +33,15 @@ const SYSTEM_PROMPT = `你是一位专业的Life Coach，拥有丰富的个人�
 // 处理聊天请求
 app.post('/chat', async (req, res) => {
     try {
+        if (!API_KEY) {
+            res.status(500).json({ error: 'API密钥未配置，请联系管理员配置API密钥。' });
+            return;
+        }
+
         const userMessage = req.body.message;
+        if (!userMessage) {
+            throw new Error('消息内容不能为空');
+        }
 
         // 准备请求数据
         const requestData = {
@@ -76,10 +87,17 @@ app.post('/chat', async (req, res) => {
                             }
                         } catch (e) {
                             console.error('解析响应数据失败:', e);
+                            res.write(`data: ${JSON.stringify({ error: '解析响应数据失败' })}\n\n`);
                         }
                     }
                 }
             });
+        });
+
+        response.data.on('error', (error) => {
+            console.error('流数据处理错误:', error);
+            res.write(`data: ${JSON.stringify({ error: '数据流处理错误' })}\n\n`);
+            res.end();
         });
 
         response.data.on('end', () => {
@@ -89,7 +107,8 @@ app.post('/chat', async (req, res) => {
 
     } catch (error) {
         console.error('请求处理失败:', error);
-        res.status(500).json({ error: '服务器内部错误' });
+        const errorMessage = error.response?.data?.error?.message || error.message || '服务器内部错误';
+        res.status(500).json({ error: errorMessage });
     }
 });
 

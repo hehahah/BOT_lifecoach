@@ -16,24 +16,75 @@
 
     <!-- 主要内容区 -->
     <main class="main-content">
-        <!-- 对话历史区域 -->
-        <section class="chat-history" id="chatHistory">
-            <!-- 对话内容将通过JavaScript动态插入 -->
-        </section>
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <!-- 心情记录区域 -->
+            <section class="mood-section">
+                <h2>当前心情</h2>
+                <div class="mood-selector">
+                    <button class="mood-btn" data-mood="happy">😊 开心</button>
+                    <button class="mood-btn" data-mood="sad">😢 难过</button>
+                    <button class="mood-btn" data-mood="angry">😠 生气</button>
+                    <button class="mood-btn" data-mood="neutral">😐 平静</button>
+                </div>
+                <div id="currentMood" class="current-mood">当前心情：未选择</div>
+            </section>
 
-        <!-- 输入区域 -->
-        <section class="input-area">
+            <!-- 对话分析区域 -->
+            <section class="analysis-section">
+                <h2>对话分析</h2>
+                <div id="analysisContent" class="analysis-content">
+                    <div class="analysis-item">
+                        <h3>情绪趋势</h3>
+                        <div id="moodTrend" class="trend-chart"></div>
+                    </div>
+                    <div class="analysis-item">
+                        <h3>关键话题</h3>
+                        <div id="keyTopics" class="key-topics"></div>
+                    </div>
+                    <div class="analysis-item">
+                        <h3>建议摘要</h3>
+                        <div id="suggestions" class="suggestions"></div>
+                    </div>
+                </div>
+            </section>
+            <!-- 天气组件 -->
+            <section class="weather-widget">
+                <h2>今日天气</h2>
+                <div class="weather-info">
+                    <div class="weather-temp">25°C</div>
+                    <div class="weather-desc">晴朗</div>
+                </div>
+            </section>
+        </aside>
+
+        <!-- 聊天区域 -->
+        <section class="chat-section">
+            <div id="chatHistory" class="chat-history">
+                <div class="message ai">
+                    <div class="avatar"></div>
+                    <div class="message-content">
+                        你好！我是你的AI生活教练，很高兴见到你。
+                    </div>
+                </div>
+                <div class="message ai">
+                    <div class="avatar"></div>
+                    <div class="message-content">
+                        今天感觉怎么样？让我们聊聊你的心情和想法吧。
+                    </div>
+                </div>
+            </div>
             <form id="chatForm" class="chat-form">
-                <textarea 
-                    id="userInput" 
-                    class="message-input" 
-                    placeholder="输入你想说的话..."
-                    rows="3"
-                    required
-                ></textarea>
+                <textarea id="userInput" class="message-input" placeholder="输入你想说的话..." rows="1"></textarea>
                 <button type="submit" class="send-button">发送</button>
             </form>
         </section>
+
+        <!-- 右侧抽屉区域 -->
+        <aside class="history-drawer" id="historyDrawer">
+            <button id="drawerToggle" class="drawer-toggle">历史记录</button>
+            <div id="conversationHistory" class="conversation-history"></div>
+        </aside>
     </main>
 
     <!-- 页面底部 -->
