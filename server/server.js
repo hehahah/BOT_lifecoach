@@ -4,11 +4,11 @@ const axios = require('axios');
 const path = require('path');
 
 const app = express();
-const port = 3000;
-
 // 配置CORS和请求体解析
 app.use(cors());
 app.use(express.json());
+
+// 在Vercel环境中不需要指定端口，它会自动处理
 
 // 配置静态文件服务
 app.use(express.static(path.join(__dirname, '..')));

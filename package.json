@@ -1,4 +1,13 @@
 {
+  "name": "life-coach-ai",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
   "dependencies": {
     "axios": "^1.7.9",
     "cors": "^2.8.5",
