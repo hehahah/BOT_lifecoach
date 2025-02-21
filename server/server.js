@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '..')));
 
 // API配置
-const API_KEY = '25521651-b809-48f5-9b61-983444f39523';
+const API_KEY = process.env.API_KEY;
 const API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
 
 // 系统提示词，定义AI角色
