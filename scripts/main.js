@@ -238,16 +238,16 @@ function updateAnalysis() {
 }
 
 // 创建消息元素
-function createMessageElement(message, isUser = false) {
+function createMessageElement(role, content) {
     const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+    messageDiv.className = `message ${role}`;
 
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
 
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
-    messageContent.textContent = message;
+    messageContent.textContent = content;
 
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);

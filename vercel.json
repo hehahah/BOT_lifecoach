@@ -12,6 +12,6 @@
     { "src": "/(.*)", "dest": "/$1" }
   ],
   "env": {
-    "API_KEY": "${API_KEY}"
+    "API_KEY": "@api-key"
   }
 }
