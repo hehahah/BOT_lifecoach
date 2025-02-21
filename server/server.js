@@ -9,7 +9,16 @@ app.use(cors());
 app.use(express.json());
 
 // 配置静态文件服务
-app.use(express.static(path.join(__dirname, '..')));
+app.use(express.static(path.join(__dirname, '..'), {
+  maxAge: '1h',
+  etag: true
+}));
+
+// 错误处理中间件
+app.use((err, req, res, next) => {
+  console.error('服务器错误:', err);
+  res.status(500).json({ error: '服务器内部错误', details: err.message });
+});
 
 // API配置
 const API_KEY = process.env.API_KEY;
