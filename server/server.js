@@ -32,7 +32,7 @@ app.post('/chat', async (req, res) => {
     try {
         // 检查API密钥配置
         if (!API_KEY) {
-            console.error('API密钥未配置，请确保环境变量API_KEY已正确设置');
+            console.error('API密钥未配置，请确保在Vercel平台上设置了环境变量API_KEY');
             throw new Error('API密钥未配置');
         }
         
@@ -64,7 +64,18 @@ app.post('/chat', async (req, res) => {
             'Authorization': `Bearer ${API_KEY}`
         };
 
-        // 设置响应头，启用流式输出
+        // 打印详细的请求信息（不包含敏感信息）
+        console.log('发送请求到API:', API_URL);
+        console.log('请求头部:', JSON.stringify({
+            ...headers,
+            Authorization: '已隐藏'
+        }));
+        console.log('请求数据:', JSON.stringify({
+            ...requestData,
+            messages: '[已隐藏]'
+        }));
+
+        // 设置响应头
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
